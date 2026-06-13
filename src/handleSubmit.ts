@@ -109,6 +109,14 @@ export const isCodeChefProblem = (problemUrl: string) => {
         return false;
     }
 };
+export const isAtcoderProblem = (problemUrl: string) => {
+    try {
+        const url = new URL(problemUrl);
+        return url.hostname.endsWith('atcoder.jp');
+    } catch {
+        return false;
+    }
+};
 
 export const handleAlgoZenithSubmit = async (
     problemName: string,
@@ -271,6 +279,64 @@ export const handleCodeChefSubmit = async (
         },
     );
 };
+export const handleAtcoderSubmit = async (
+    problemName: string,
+    languageId: number,
+    sourceCode: string,
+    problemUrl: string,
+) => {
+    const tab = await chrome.tabs.create({ active: true, url: problemUrl });
+    const tabId = tab.id as number;
+    chrome.windows.update(tab.windowId, { focused: true });
+
+    chrome.tabs.onUpdated.addListener(
+        function listener(updatedTabId, changeInfo) {
+            if (updatedTabId === tabId && changeInfo.status === 'complete') {
+                chrome.tabs.onUpdated.removeListener(listener);
+
+                setTimeout(async () => {
+                    await chrome.scripting.executeScript({
+                        target: { tabId, allFrames: false },
+                        files: ['/dist/AtcoderInjectedScript.js'],
+                    });
+
+                    chrome.tabs.sendMessage(tabId, {
+                        type: 'cph-submit-Atcoder',
+                        languageId,
+                    });
+
+                    /**ChromeV3 don't Allow us to inject script due to CSP policy**/
+                    setTimeout(async () => {
+                        await chrome.scripting.executeScript({
+                            target: { tabId, allFrames: false },
+                            world: 'MAIN',
+                            func: (code) => {
+                                const w = window as any;
+                                if (w.ace)
+                                    w.ace
+                                        .edit(
+                                            document.querySelector(
+                                                '.ace_editor',
+                                            ),
+                                        )
+                                        .setValue(code, -1);
+                            },
+                            args: [sourceCode],
+                        });
+
+                        setTimeout(() => {
+                            chrome.scripting.executeScript({
+                                target: { tabId, allFrames: false },
+                                func: () =>
+                                    document.getElementById('submit')?.click(),
+                            });
+                        }, 7000);
+                    }, 1000);
+                }, 2000);
+            }
+        },
+    );
+};
 export const handleSubmit = async (
     problemName: string,
     languageId: number,
@@ -300,6 +366,14 @@ export const handleSubmit = async (
     }
     if (isCodeChefProblem(problemUrl)) {
         return handleCodeChefSubmit(
+            problemName,
+            languageId,
+            sourceCode,
+            problemUrl,
+        );
+    }
+    if (isAtcoderProblem(problemUrl)) {
+        return handleAtcoderSubmit(
             problemName,
             languageId,
             sourceCode,

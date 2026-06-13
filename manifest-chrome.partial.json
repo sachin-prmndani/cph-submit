@@ -6,6 +6,7 @@
         "https://cses.fi/*",
         "https://codeforces.com/*",
         "*://*.codechef.com/*",
+        "*://*.atcoder.jp/*",
         "https://maang.in/*"
     ],
     "background": {
