@@ -2,7 +2,7 @@ import config from './config';
 import log from './log';
 
 declare const browser: any;
-declare const ace: any; //This is required for platfroms using ace code Editor
+declare const ace: any; //Ace Editor
 
 if (typeof browser !== 'undefined') {
     self.chrome = browser;
@@ -297,7 +297,7 @@ export const handleAtcoderSubmit = async (
                 setTimeout(async () => {
                     await chrome.scripting.executeScript({
                         target: { tabId, allFrames: false },
-                        files: ['/dist/AtcoderInjectedScript.js'],
+                        files: ['/dist/atcoderInjectedScript.js'],
                     });
 
                     chrome.tabs.sendMessage(tabId, {
@@ -323,14 +323,6 @@ export const handleAtcoderSubmit = async (
                             },
                             args: [sourceCode],
                         });
-
-                        setTimeout(() => {
-                            chrome.scripting.executeScript({
-                                target: { tabId, allFrames: false },
-                                func: () =>
-                                    document.getElementById('submit')?.click(),
-                            });
-                        }, 7000);
                     }, 1000);
                 }, 2000);
             }

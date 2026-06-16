@@ -98,21 +98,6 @@ chrome.runtime.onMessage.addListener((message) => {
                     await sleep(400);
                 }
             }
-
-            const editor = document.querySelector('.ace_editor');
-            if (editor && typeof ace !== 'undefined') {
-                ace.edit(editor).setValue(message.sourceCode, -1);
-            }
-
-            await sleep(200);
-
-            const submitBtn = document.getElementById('submit_btn');
-            if (submitBtn) {
-                simulateHumanClick(submitBtn);
-                log('problem submitted succesfully');
-            } else {
-                alert('submit button not found please submit manually');
-            }
         } catch (error) {
             log(error);
         }

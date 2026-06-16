@@ -67,25 +67,13 @@ chrome.runtime.onMessage.addListener((message) => {
         );
     }
 
-    if (sourceCode) {
-        const script = document.createElement('script');
-        const escapedCode = sourceCode
-            .replace(/\\/g, '\\\\')
-            .replace(/`/g, '\\`');
+    const cloudFareVerificationChecker = setInterval(() => {
+        const tokenInput = document.querySelector(
+            'input[name="cf-turnstile-response"]',
+        ) as HTMLInputElement | null;
 
-        script.textContent = `
-            if (typeof ace !== 'undefined') {
-                const editor = ace.edit("editor");
-                editor.setValue(\`${escapedCode}\`);
-                editor.clearSelection();
-            } else {
-                const textArea = document.querySelector('.plain-textarea');
-                if (textArea) textArea.value = \`${escapedCode}\`;
-            }
-        `;
-
-        document.documentElement.appendChild(script);
-        script.remove();
-        log('Successfully injected source code into the editor.');
-    }
+        if (tokenInput && tokenInput.value) {
+            document.getElementById('submit')?.click();
+        }
+    }, 250);
 });
