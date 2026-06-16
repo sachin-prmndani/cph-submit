@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener((message) => {
         try {
             const languageName = idToCodechefLanguage[message.languageId];
             if (!languageName) {
-                alert('Language is not supported');
+                alert('Current Language is not supported');
                 return;
             }
 
@@ -109,7 +109,7 @@ chrome.runtime.onMessage.addListener((message) => {
             const submitBtn = document.getElementById('submit_btn');
             if (submitBtn) {
                 simulateHumanClick(submitBtn);
-                log('button submitted succesfully');
+                log('problem submitted succesfully');
             } else {
                 alert('submit button not found please submit manually');
             }
@@ -119,5 +119,5 @@ chrome.runtime.onMessage.addListener((message) => {
     };
 
     execute();
-    return true;
+    
 });
