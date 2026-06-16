@@ -64,14 +64,14 @@ const simulateHumanClick = (element: HTMLElement) => {
     });
 };
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message) => {
     if (message.type !== 'cph-submit-codechef') return false;
 
     const execute = async () => {
         try {
             const languageName = idToCodechefLanguage[message.languageId];
             if (!languageName) {
-                sendResponse({ success: false, error: 'Unsupported language' });
+                alert('Language is not supported');
                 return;
             }
 
@@ -109,15 +109,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             const submitBtn = document.getElementById('submit_btn');
             if (submitBtn) {
                 simulateHumanClick(submitBtn);
-                sendResponse({ success: true });
+                log('button submitted succesfully');
             } else {
-                sendResponse({
-                    success: false,
-                    error: 'Submit button not found',
-                });
+                alert('submit button not found please submit manually');
             }
-        } catch (error: any) {
-            sendResponse({ success: false, error: error.message });
+        } catch (error) {
+            log(error);
         }
     };
 
