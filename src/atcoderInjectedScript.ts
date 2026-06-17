@@ -66,6 +66,7 @@ chrome.runtime.onMessage.addListener((message) => {
             'Error: Could not find the AtCoder language select box on this page.',
         );
     }
+    new Promise((r) => setTimeout(r, 3000));
 
     const cloudFareVerificationChecker = setInterval(() => {
         const tokenInput = document.querySelector(
