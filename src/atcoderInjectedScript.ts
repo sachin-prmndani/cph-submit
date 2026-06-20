@@ -28,7 +28,7 @@ const idToAtcoderLanguage: Record<number, string> = {
     12: 'Haskell (GHC 9.8.4)',
 };
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener(async (message) => {
     if (message.type !== 'cph-submit-Atcoder') return;
 
     const { sourceCode, languageId } = message;
@@ -66,14 +66,20 @@ chrome.runtime.onMessage.addListener((message) => {
             'Error: Could not find the AtCoder language select box on this page.',
         );
     }
-    new Promise((r) => setTimeout(r, 3000));
+    await new Promise((r) => setTimeout(r, 1500));
+    /* there is no cloudfare verification during live contests*/
+    const tokenInput = document.querySelector(
+        'input[name="cf-turnstile-response"]',
+    ) as HTMLInputElement | null;
+
+    if (!tokenInput) {
+        document.getElementById('submit')?.click();
+        return;
+    }
 
     const cloudFareVerificationChecker = setInterval(() => {
-        const tokenInput = document.querySelector(
-            'input[name="cf-turnstile-response"]',
-        ) as HTMLInputElement | null;
-
         if (tokenInput && tokenInput.value) {
+            clearInterval(cloudFareVerificationChecker);
             document.getElementById('submit')?.click();
         }
     }, 250);
