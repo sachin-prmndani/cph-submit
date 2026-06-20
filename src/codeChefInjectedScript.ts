@@ -101,6 +101,8 @@ chrome.runtime.onMessage.addListener((message) => {
         } catch (error) {
             log(error);
         }
+        await new Promise((r) => setTimeout(r, 1500));
+        document.getElementById('submit_btn')?.click();
     };
 
     execute();

@@ -263,16 +263,6 @@ export const handleCodeChefSubmit = async (
                             },
                             args: [sourceCode],
                         });
-
-                        setTimeout(() => {
-                            chrome.scripting.executeScript({
-                                target: { tabId, allFrames: false },
-                                func: () =>
-                                    document
-                                        .getElementById('submit_btn')
-                                        ?.click(),
-                            });
-                        }, 500);
                     }, 1000);
                 }, 2000);
             }
